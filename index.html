@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Update Fee Item</title>
   <style>
     body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
@@ -115,34 +117,24 @@
       fetch(`${scriptUrl}?action=getFeeStructure`)
         .then(response => response.json())
         .then(data => {
-          if (!data || data.length === 0) {
-            document.getElementById('feeTable').innerHTML = '<p>No data available.</p>';
-            return;
-          }
-
           let tableHtml = '<table>';
-          // Assuming the data contains keys as headers
-          let headers = Object.keys(data[0]);
-          tableHtml += '<tr>';
-          headers.forEach(header => {
-            tableHtml += `<th>${header}</th>`;
-          });
-          tableHtml += '</tr>';
-
-          data.forEach(row => {
+          data.forEach(function(row, rowIndex) {
             tableHtml += '<tr>';
-            headers.forEach(header => {
-              tableHtml += `<td>${row[header]}</td>`;
+            row.forEach(function(cell) {
+              if (rowIndex === 0) {
+                tableHtml += '<th>' + cell + '</th>';
+              } else {
+                tableHtml += '<td>' + cell + '</td>';
+              }
             });
             tableHtml += '</tr>';
           });
-
           tableHtml += '</table>';
           document.getElementById('feeTable').innerHTML = tableHtml;
         })
         .catch(error => {
           console.error('Error:', error);
-          document.getElementById('feeTable').innerHTML = '<p style="color:red;">Failed to load table. Error: ' + error.message + '</p>';
+          document.getElementById('feeTable').innerHTML = '<p style="color:red;">Failed to load table.</p>';
         });
     }
 
@@ -150,3 +142,4 @@
   </script>
 </body>
 </html>
+
