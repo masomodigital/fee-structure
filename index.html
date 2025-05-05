@@ -93,16 +93,16 @@
       const newAmount = document.getElementById('newAmount').value;
 
       fetch(`${scriptUrl}?action=updateFee&grade=${encodeURIComponent(grade)}&term=${encodeURIComponent(term)}&feeType=${encodeURIComponent(feeType)}&newAmount=${encodeURIComponent(newAmount)}`)
-        .then(response => response.text())
+        .then(response => response.text())  // Expecting a text response for update confirmation
         .then(responseText => {
           if (responseText === "Update successful!") {
             document.getElementById('message').style.color = 'green';
-            loadFeeTable();
+            loadFeeTable();  // Reload the table after a successful update
           } else {
             document.getElementById('message').style.color = 'red';
           }
           document.getElementById('message').textContent = responseText;
-          form.reset();
+          form.reset();  // Reset form fields after submission
         })
         .catch(error => {
           console.error('Error:', error);
@@ -112,23 +112,23 @@
     });
 
     function loadFeeTable() {
-      fetch(`${scriptUrl}?action=getFeeStructure`)
-        .then(response => response.json())
+      fetch(`${scriptUrl}?action=getFeeStructure`)  // Fetching fee structure data
+        .then(response => response.json())  // Ensure JSON response is processed
         .then(data => {
           let tableHtml = '<table>';
           data.forEach(function(row, rowIndex) {
             tableHtml += '<tr>';
-            row.forEach(function(cell) {
-              if (rowIndex === 0) {
-                tableHtml += '<th>' + cell + '</th>';
+            row.forEach(function(cell, cellIndex) {
+              if (rowIndex === 0) {  // Header row
+                tableHtml += `<th>${cell}</th>`;
               } else {
-                tableHtml += '<td>' + cell + '</td>';
+                tableHtml += `<td>${cell}</td>`;  // Data rows
               }
             });
             tableHtml += '</tr>';
           });
           tableHtml += '</table>';
-          document.getElementById('feeTable').innerHTML = tableHtml;
+          document.getElementById('feeTable').innerHTML = tableHtml;  // Display the table
         })
         .catch(error => {
           console.error('Error:', error);
@@ -136,8 +136,7 @@
         });
     }
 
-    window.onload = loadFeeTable;
+    window.onload = loadFeeTable;  // Load the table on page load
   </script>
 </body>
 </html>
-
