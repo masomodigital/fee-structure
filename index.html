@@ -80,66 +80,65 @@
   </div>
 
   <script>
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbyO6GjgILMogd6gIy2555UPscK16ZqWQSylHzNa3Y5lPiZttLKUgSiNX6tUefx-cK4y/exec'; // Replace with your deployed web app URL
+  const scriptUrl = 'https://script.google.com/macros/s/AKfycbyO6GjgILMogd6gIy2555UPscK16ZqWQSylHzNa3Y5lPiZttLKUgSiNX6tUefx-cK4y/exec'; // Replace with your deployed web app URL
 
-    const form = document.getElementById('feeForm');
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      document.getElementById('message').style.color = 'red';
-      document.getElementById('message').textContent = 'Please wait! Updating...';
+  const form = document.getElementById('feeForm');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    document.getElementById('message').style.color = 'red';
+    document.getElementById('message').textContent = 'Please wait! Updating...';
 
-      const grade = document.getElementById('grade').value;
-      const term = document.getElementById('term').value;
-      const feeType = document.getElementById('feeType').value;
-      const newAmount = document.getElementById('newAmount').value;
+    const grade = document.getElementById('grade').value;
+    const term = document.getElementById('term').value;
+    const feeType = document.getElementById('feeType').value;
+    const newAmount = document.getElementById('newAmount').value;
 
-      fetch(`${scriptUrl}?action=updateFee&grade=${encodeURIComponent(grade)}&term=${encodeURIComponent(term)}&feeType=${encodeURIComponent(feeType)}&newAmount=${encodeURIComponent(newAmount)}`)
-        .then(response => response.text())
-        .then(responseText => {
-          if (responseText === "Update successful!") {
-            document.getElementById('message').style.color = 'green';
-            loadFeeTable();
-          } else {
-            document.getElementById('message').style.color = 'red';
-          }
-          document.getElementById('message').textContent = responseText;
-          form.reset();
-        })
-        .catch(error => {
-          console.error('Error:', error);
+    fetch(`${scriptUrl}?action=updateFee&grade=${encodeURIComponent(grade)}&term=${encodeURIComponent(term)}&feeType=${encodeURIComponent(feeType)}&newAmount=${encodeURIComponent(newAmount)}`)
+      .then(response => response.text())
+      .then(responseText => {
+        if (responseText === "Update successful!") {
+          document.getElementById('message').style.color = 'green';
+          loadFeeTable(); // Reload the table after update
+        } else {
           document.getElementById('message').style.color = 'red';
-          document.getElementById('message').textContent = 'An error occurred.';
-        });
-    });
+        }
+        document.getElementById('message').textContent = responseText;
+        form.reset();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('message').style.color = 'red';
+        document.getElementById('message').textContent = 'An error occurred.';
+      });
+  });
 
-    function loadFeeTable() {
-      fetch(`${scriptUrl}?action=getFeeStructure`)
-        .then(response => response.json())
-        .then(data => {
-          let tableHtml = '<table>';
-          data.forEach(function(row, rowIndex) {
-            tableHtml += '<tr>';
-            row.forEach(function(cell) {
-              if (rowIndex === 0) {
-                tableHtml += '<th>' + cell + '</th>';
-              } else {
-                tableHtml += '<td>' + cell + '</td>';
-              }
-            });
-            tableHtml += '</tr>';
+  function loadFeeTable() {
+    fetch(`${scriptUrl}?action=getFeeStructure`)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Fetched Data:', data); // Log the fetched data for debugging
+
+        let tableHtml = '<table border="1">';
+        // Assuming the first row contains headers
+        data.forEach(function(row, rowIndex) {
+          tableHtml += '<tr>';
+          row.forEach(function(cell) {
+            tableHtml += rowIndex === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
           });
-          tableHtml += '</table>';
-          document.getElementById('feeTable').innerHTML = tableHtml;
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          document.getElementById('feeTable').innerHTML = '<p style="color:red;">Failed to load table.</p>';
+          tableHtml += '</tr>';
         });
-    }
+        tableHtml += '</table>';
+        document.getElementById('feeTable').innerHTML = tableHtml;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('feeTable').innerHTML = '<p style="color:red;">Failed to load table.</p>';
+      });
+  }
 
-    window.onload = loadFeeTable;
-  </script>
+  window.onload = loadFeeTable;
+</script>
+
 </body>
 </html>
-
